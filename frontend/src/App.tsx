@@ -38,8 +38,10 @@ function App() {
     setErrorMsg('');
     setSearchedQuery(query);
 
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
     try {
-      const res = await fetch('http://localhost:5000/api/search', {
+      const res = await fetch(`${apiBaseUrl}/api/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
@@ -53,7 +55,7 @@ function App() {
       setResults(data);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || 'Không thể kết nối đến backend server (http://localhost:5000).');
+      setErrorMsg(err.message || `Không thể kết nối đến backend server (${apiBaseUrl}).`);
     } finally {
       setLoading(false);
     }
