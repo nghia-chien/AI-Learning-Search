@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Globe, Video, FileText, ExternalLink, AlertTriangle, Key, RefreshCw, Database, CheckCircle2, Sliders, Split, Info, Brain, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Search, Globe, Video, FileText, ExternalLink, AlertTriangle, Key, RefreshCw, Database, Sliders, Split, Info, Brain, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 
 interface SearchItem {
   title: string;
@@ -732,8 +732,8 @@ function SearchCard({ item, badge, badgeClass, hoverClass, hasThumbnail = false 
   const [showOriginal, setShowOriginal] = useState(false);
   const hasTranslation = !!(item.translatedTitle && item.translatedTitle !== item.title);
 
-  const displayTitle = showOriginal || !hasTranslation ? item.title : item.translatedTitle;
-  const displaySnippet = showOriginal || !hasTranslation ? item.snippet : item.translatedSnippet;
+  const displayTitle = (showOriginal || !hasTranslation ? item.title : item.translatedTitle) || item.title || '';
+  const displaySnippet = (showOriginal || !hasTranslation ? item.snippet : item.translatedSnippet) || item.snippet || '';
 
   return (
     <div className={`bg-slate-950 p-4 rounded-xl border border-slate-900 transition space-y-2 hover:${hoverClass} relative flex flex-col justify-between h-full`}>
