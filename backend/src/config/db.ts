@@ -42,14 +42,25 @@ export async function initDb() {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    
+    // Add country column if not exists
+    await client.query(`
+      ALTER TABLE search_results ADD COLUMN IF NOT EXISTS country VARCHAR(10);
+    `);
+
     client.release();
-    console.log('Supabase PostgreSQL table `search_results` verified successfully.');
+    console.log('Supabase PostgreSQL table `search_results` verified successfully with country column.');
   } catch (err) {
     console.error('Database initialization error:', err);
   }
 }
 
-export async function saveSearchResults(query: string, sourceType: 'web' | 'youtube' | 'pdf', items: any[]) {
+export async function saveSearchResults(
+  query: string, 
+  sourceType: 'web' | 'youtube' | 'pdf', 
+  items: any[], 
+  country?: string
+) {
   if (!pool || !items || items.length === 0) return 0;
 
   try {
@@ -58,8 +69,8 @@ export async function saveSearchResults(query: string, sourceType: 'web' | 'yout
 
     for (const item of items) {
       await client.query(
-        `INSERT INTO search_results (query, source_type, title, url, snippet, thumbnail, published_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        `INSERT INTO search_results (query, source_type, title, url, snippet, thumbnail, published_at, country)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [
           query,
           sourceType,
@@ -67,7 +78,8 @@ export async function saveSearchResults(query: string, sourceType: 'web' | 'yout
           item.url || '',
           item.snippet || '',
           item.thumbnail || null,
-          item.publishedAt || null
+          item.publishedAt || null,
+          country || null
         ]
       );
       savedCount++;
@@ -80,3 +92,4 @@ export async function saveSearchResults(query: string, sourceType: 'web' | 'yout
     return 0;
   }
 }
+
